@@ -12,16 +12,17 @@ class ModulesController extends Controller
     private $request;
     private $model;
     private $moduleTransformer;
+    private $modules;
 
     /**
      * Create a new ModuleController instance.
      * 
      * @return void
      */
-    public function __construct(Request $request, Module $model)
+    public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->model = $model;
+        $this->model = new Module;
         $this->moduleTransformer = new ModuleTransformer();
         $this->middleware('auth');
     }
@@ -79,7 +80,7 @@ class ModulesController extends Controller
         $module = $this->model->findOrFail($id);
         $validator = Validator::make($this->request->all(), $this->model::$rules);
         if ($validator->fails()) return $this->flashError($validator->errors());
-        
+
         $module->fill($this->request->only('name', 'application_object'));
         $module->save();
         return app('fractal')->item($module, $this->moduleTransformer);
