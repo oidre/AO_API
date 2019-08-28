@@ -29,6 +29,12 @@ $factory->define(App\Module::class, function (Faker\Generator $faker) {
     ];
 });
 
+$factory->define(App\Project::class, function (Faker\Generator $faker) {
+    return [
+        'name' => $faker->name,
+    ];
+});
+
 $factory->define(App\Date::class, function (Faker\Generator $faker) {
     return [
         'full_date' => Carbon::now()->format('Y-m-d'),
