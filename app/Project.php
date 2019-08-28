@@ -12,4 +12,9 @@ class Project extends Model
         'name' => 'bail|required',
         'application_object_used' => 'bail|required|numeric|min:0'
     ];
+
+    public function reports()
+    {
+        return $this->hasMany('App\Report');
+    }
 }

@@ -43,3 +43,15 @@ $factory->define(App\Date::class, function (Faker\Generator $faker) {
         'year' => Carbon::now()->year,
     ];
 });
+
+$factory->define(App\Report::class, function (Faker\Generator $faker) {
+    $modules = App\Module::all()->pluck('id')->toArray();
+    $projects = App\Project::all()->pluck('id')->toArray();
+    $dates = App\Date::all()->pluck('id')->toArray();
+    return [
+        'module_id' => $faker->randomElement($modules),
+        'project_id' => $faker->randomElement($projects),
+        'date_id' => $faker->randomElement($dates),
+        'application_object_used' => $faker->numberBetween($min = 0, $max = 20),
+    ];
+});

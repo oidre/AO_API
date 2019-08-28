@@ -47,7 +47,7 @@ class ModulesController extends Controller
      * @return mixed
      */
     public function show($id)
-    {
+    { 
         return app('fractal')->item($this->model->findOrFail($id), $this->moduleTransformer);
     }
 

@@ -82,6 +82,7 @@ $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(App\Providers\FractalServiceProvider::class);
+$app->register(Unlu\Laravel\Api\LumenServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

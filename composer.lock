@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b59089158314ef5b2cc6eaaec0f95847",
+    "content-hash": "b3cdf3ea2a419f3ba18cb6fd1f0d8eab",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -3390,6 +3390,49 @@
                 "laravel"
             ],
             "time": "2019-03-14T20:29:20+00:00"
+        },
+        {
+            "name": "unlu/laravel-api-query-builder",
+            "version": "v1.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/selahattinunlu/laravel-api-query-builder.git",
+                "reference": "2a85dea4ee09046209d09821725f9b1ceb4b97fa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/selahattinunlu/laravel-api-query-builder/zipball/2a85dea4ee09046209d09821725f9b1ceb4b97fa",
+                "reference": "2a85dea4ee09046209d09821725f9b1ceb4b97fa",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": ">=5.0.0",
+                "illuminate/http": ">=5.0.0",
+                "illuminate/support": ">=5.0.0",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Unlu\\Laravel\\Api\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Selahattin Ünlü",
+                    "email": "selahattin.unlu@yandex.com"
+                }
+            ],
+            "description": "Laravel API Query Builder Package.",
+            "keywords": [
+                "api",
+                "laravel"
+            ],
+            "time": "2017-06-13T23:49:29+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

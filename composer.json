@@ -9,7 +9,8 @@
         "laravel/lumen-framework": "5.8.*",
         "league/fractal": "^0.18.0",
         "nesbot/carbon": "^2.23",
-        "tymon/jwt-auth": "^1.0"
+        "tymon/jwt-auth": "^1.0",
+        "unlu/laravel-api-query-builder": "^1.7"
     },
     "require-dev": {
         "flipbox/lumen-generator": "^5.6",

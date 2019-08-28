@@ -86,6 +86,31 @@ $router->group([
     ]);
 });
 
+$router->group([
+    'prefix' => 'reports',
+], function () use ($router) {
+    $router->get('/', [
+        'as' => 'reports.index',
+        'uses' => 'ReportsController@index',
+    ]);
+    $router->get('/{id:[0-9]+}', [
+        'as' => 'reports.show',
+        'uses' => 'ReportsController@show',
+    ]);
+    $router->post('/', [
+        'as' => 'reports.store',
+        'uses' => 'ReportsController@store',
+    ]);
+    $router->put('/{id:[0-9]+}', [
+        'as' => 'reports.update',
+        'uses' => 'ReportsController@update',
+    ]);
+    $router->delete('/{id:[0-9]+}', [
+        'as' => 'reports.destroy',
+        'uses' => 'ReportsController@destroy',
+    ]);
+});
+
 $router->post('/dates', 'DatesController@store');
 
 $router->get('/users', 'UsersController@index');

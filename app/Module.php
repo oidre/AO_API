@@ -12,4 +12,9 @@ class Module extends Model
         'name' => 'bail|required',
         'application_object' => 'bail|required|numeric|min:0'
     ];
+
+    public function reports()
+    {
+        return $this->hasMany('App\Report');
+    }
 }
