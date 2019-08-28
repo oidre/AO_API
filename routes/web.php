@@ -61,5 +61,6 @@ $router->group([
     ]);
 });
 
+$router->post('/dates', 'DatesController@store');
 
 $router->get('/users', 'UsersController@index');
