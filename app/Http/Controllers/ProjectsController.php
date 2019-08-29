@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Project;
+use App\Date;
+use App\Report;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Transformer\ProjectTransformer;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class ProjectsController extends Controller
 {
@@ -58,13 +62,25 @@ class ProjectsController extends Controller
     public function store()
     {
         $validator = Validator::make($this->request->all(), $this->model::$rules);
-        if ($validator->fails()) return $this->flashError($validator->errors());
+        if ($validator->fails()) return $this->flashError(422, $validator->errors());
 
-        $project = $this->model->create($this->request->only('name'));
-        $data = app('fractal')->item($project, $this->transformer);
+        $res = DB::transaction(function() {
+            $project = $this->model->create($this->request->only('name'));
+            $data = app('fractal')->item($project, $this->transformer);
 
-        return response()->json($data, 201, [
-            'Location' => route('projects.show', ['id' => $project->id]),
+            // store Date
+            $date_id = $this->storeDate();
+
+            // store Report
+            $this->storeReport($project->id, $date_id, $this->request->modules, $this->request->application_object_used);
+            return [
+                'data' => $data, 
+                'project' => $project
+            ];
+        });
+
+        return response()->json($res['data'], 201, [
+            'Location' => route('projects.show', ['id' => $res['project']->id]),
         ]);
     }
 
@@ -97,5 +113,38 @@ class ProjectsController extends Controller
         $project->delete();
 
         return response(null, 204);
+    }
+
+    private function storeDate() {
+        Carbon::setLocale('id');
+    
+        $now = Carbon::now();
+    
+        // Check if this month already exist
+        $date = Date::where('month', $now->month)->where('year', $now->year)->first();
+    
+        if ($date === null) {
+          $date = Date::create([
+            'full_date' => $now->format('Y-m-d'),
+            'month' => $now->month,
+            'month_name' => $now->monthName,
+            'year' => $now->year,
+          ]);
+        }
+
+        return $date->id;
+    }
+
+    private function storeReport($project_id, $date_id, array $modules, array $aou) {
+        foreach ($modules as $key => $value) {
+            Report::create([
+                'module_id' => $value,
+                'project_id' => $project_id,
+                'date_id' => $date_id,
+                'application_object_used' => $aou[$key],
+            ]);
+        }
+        
+        return;
     }
 }
