@@ -68,11 +68,11 @@ class ProjectsController extends Controller
             $project = $this->model->create($this->request->only('name'));
             $data = app('fractal')->item($project, $this->transformer);
 
-            // store Date
-            $date_id = $this->storeDate();
+            // get current month
+            $date = Date::orderBy('id', 'desc')->first();
 
             // store Report
-            $this->storeReport($project->id, $date_id, $this->request->modules, $this->request->application_object_used);
+            $this->storeReport($project->id, $date->id, $this->request->modules, $this->request->application_object_used);
             return [
                 'data' => $data, 
                 'project' => $project
@@ -94,10 +94,27 @@ class ProjectsController extends Controller
     {   
         $project = $this->model->findOrFail($id);
         $validator = Validator::make($this->request->all(), $this->model::$rules);
-        if ($validator->fails()) return $this->flashError($validator->errors());
+        if ($validator->fails()) return $this->flashError(422, $validator->errors());
 
-        $project->fill($this->request->only('name'));
-        $project->save();
+        DB::transaction(function () use ($project, $id) {
+            $project->fill($this->request->only('name'));
+            $data = $project->save();
+
+            // get current month
+            $date = Date::orderBy('id', 'desc')->first();
+
+            // set null if no module deleted
+            if ($this->request->deleted_modules == null) {
+                $this->request->deleted_modules = [];
+            }
+
+            // store report
+            $this->storeReport($project->id, $date->id, $this->request->modules, $this->request->application_object_used, $this->request->deleted_modules);
+            return $data;
+        });
+
+        $project = $this->model->findOrFail($id);
+
         return app('fractal')->item($project, $this->transformer);
     }
 
@@ -115,34 +132,27 @@ class ProjectsController extends Controller
         return response(null, 204);
     }
 
-    private function storeDate() {
-        Carbon::setLocale('id');
-    
-        $now = Carbon::now();
-    
-        // Check if this month already exist
-        $date = Date::where('month', $now->month)->where('year', $now->year)->first();
-    
-        if ($date === null) {
-          $date = Date::create([
-            'full_date' => $now->format('Y-m-d'),
-            'month' => $now->month,
-            'month_name' => $now->monthName,
-            'year' => $now->year,
-          ]);
+    private function storeReport($project_id, $date_id, array $modules, array $aou, array $deletedModules = []) {        
+        foreach ($modules as $i => $module_id) {
+            $report = Report::where('project_id', $project_id)->where('module_id', $module_id)->where('date_id', $date_id)->first();
+            if ($report) {
+                // found and do update
+                $report->application_object_used = $aou[$i];
+                $report->save();
+            } else {
+                // not found create new one
+                Report::create([
+                    'module_id' => $module_id,
+                    'project_id' => $project_id,
+                    'date_id' => $date_id,
+                    'application_object_used' => $aou[$i],
+                ]);
+            }
         }
 
-        return $date->id;
-    }
-
-    private function storeReport($project_id, $date_id, array $modules, array $aou) {
-        foreach ($modules as $key => $value) {
-            Report::create([
-                'module_id' => $value,
-                'project_id' => $project_id,
-                'date_id' => $date_id,
-                'application_object_used' => $aou[$key],
-            ]);
+        // deleting modules unused
+        if (! empty($deletedModules)) { 
+            Report::whereIn('module_id', $deletedModules)->where('date_id', $date_id)->delete();
         }
         
         return;

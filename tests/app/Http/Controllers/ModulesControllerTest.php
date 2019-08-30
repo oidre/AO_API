@@ -72,7 +72,7 @@ class ModulesControllerTest extends TestCase {
   }
 
   /** @test */
-  public function store_should_save_new_book_in_the_database() {
+  public function store_should_save_new_module_in_the_database() {
     $this
       ->apiAs($this->user, 'post', route('modules.store'), [
         'name' => 'module name',

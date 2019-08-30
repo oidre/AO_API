@@ -36,11 +36,13 @@ $factory->define(App\Project::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(App\Date::class, function (Faker\Generator $faker) {
+    $now = Carbon::now();
+    // $now = Carbon::now()->addMonth();
     return [
-        'full_date' => Carbon::now()->format('Y-m-d'),
-        'month' => Carbon::now()->month,
-        'month_name' => Carbon::now()->monthName,
-        'year' => Carbon::now()->year,
+        'full_date' => $now->format('Y-m-d'),
+        'month' => $now->month,
+        'month_name' => $now->monthName,
+        'year' => $now->year,
     ];
 });
 

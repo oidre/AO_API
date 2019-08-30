@@ -34,7 +34,7 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        if ($validator->fails()) return $this->flashError($validator->errors());
+        if ($validator->fails()) return $this->flashError(422, $validator->errors());
 
         $credentials = $this->request->only('email', 'password');
 

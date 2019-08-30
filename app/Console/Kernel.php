@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        'App\Console\Commands\CreateDateEveryMonth',
+        'App\Console\Commands\CreateReportEveryMonth',
     ];
 
     /**
@@ -24,6 +25,18 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //
+        $schedule->command('create:date')->monthly();
+        $schedule->command('create:report')->monthly();
     }
+
+    /**
+     * Get the timezone that should be used by default for scheduled events.
+     *
+     * @return \DateTimeZone|string|null
+     */
+    protected function scheduleTimezone()
+    {
+        return 'Asia/Jakarta';
+    }
+
 }

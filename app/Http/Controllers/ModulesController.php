@@ -59,7 +59,7 @@ class ModulesController extends Controller
     public function store()
     {
         $validator = Validator::make($this->request->all(), $this->model::$rules);
-        if ($validator->fails()) return $this->flashError($validator->errors());
+        if ($validator->fails()) return $this->flashError(422, $validator->errors());
 
         $module = $this->model->create($this->request->only('name', 'application_object'));
         $data = app('fractal')->item($module, $this->moduleTransformer);
@@ -79,7 +79,7 @@ class ModulesController extends Controller
     {   
         $module = $this->model->findOrFail($id);
         $validator = Validator::make($this->request->all(), $this->model::$rules);
-        if ($validator->fails()) return $this->flashError($validator->errors());
+        if ($validator->fails()) return $this->flashError(422, $validator->errors());
 
         $module->fill($this->request->only('name', 'application_object'));
         $module->save();

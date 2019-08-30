@@ -111,6 +111,6 @@ $router->group([
     ]);
 });
 
-$router->post('/dates', 'DatesController@store');
+$router->get('/dates', 'DatesController@index');
 
 $router->get('/users', 'UsersController@index');
