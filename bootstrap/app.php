@@ -25,6 +25,8 @@ $app->withFacades();
 
 $app->withEloquent();
 
+$app->configure('apidoc');
+
 /*
 |--------------------------------------------------------------------------
 | Register Container Bindings

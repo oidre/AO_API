@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Module;
+use App\Date;
 use Illuminate\Http\Request;
 use App\Transformer\ModuleTransformer;
+use App\Transformer\ProjectTransformer;
 use Illuminate\Support\Facades\Validator;
 
 class ModulesController extends Controller
@@ -24,6 +26,7 @@ class ModulesController extends Controller
         $this->request = $request;
         $this->model = new Module;
         $this->moduleTransformer = new ModuleTransformer();
+        $this->projectTransformer = new ProjectTransformer();
         $this->middleware('auth');
     }
 
@@ -98,5 +101,37 @@ class ModulesController extends Controller
         $module->delete();
 
         return response(null, 204);
+    }
+
+    /**
+     * GET /modules/{$id}/projects
+     * 
+     * @param integer $id
+     * @return array
+     */
+    public function projects($id)
+    {
+        // check if module id exist
+        $this->model->findOrFail($id);
+
+        // get latest month
+        $date = Date::orderBy('id', 'desc')->first();
+
+        $modules = $this->model
+            ->with(['reports' => function ($q) use ($date) {
+                $q->where('date_id', $date->id);
+            }], 'reports.project')
+            ->where('modules.id', $id)
+            ->first();
+
+        $projects = [];
+
+        foreach ($modules->reports as $report) {
+            array_push($projects, $report->project);
+        }
+        $paginator = $this->paginate($this->request, $projects);
+        $projects = $paginator->getCollection();
+
+        return app('fractal')->paginate($projects, $this->projectTransformer, $paginator);
     }
 }
